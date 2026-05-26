@@ -9,51 +9,215 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppRunnerRouteImport } from './routes/_app.runner'
+import { Route as AppRequestRouteImport } from './routes/_app.request'
+import { Route as AppErrandsRouteImport } from './routes/_app.errands'
+import { Route as AppTrackingIdRouteImport } from './routes/_app.tracking.$id'
+import { Route as AppChatIdRouteImport } from './routes/_app.chat.$id'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRunnerRoute = AppRunnerRouteImport.update({
+  id: '/runner',
+  path: '/runner',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRequestRoute = AppRequestRouteImport.update({
+  id: '/request',
+  path: '/request',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppErrandsRoute = AppErrandsRouteImport.update({
+  id: '/errands',
+  path: '/errands',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingIdRoute = AppTrackingIdRouteImport.update({
+  id: '/tracking/$id',
+  path: '/tracking/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChatIdRoute = AppChatIdRouteImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/errands': typeof AppErrandsRoute
+  '/request': typeof AppRequestRoute
+  '/runner': typeof AppRunnerRoute
+  '/settings': typeof AppSettingsRoute
+  '/chat/$id': typeof AppChatIdRoute
+  '/tracking/$id': typeof AppTrackingIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/errands': typeof AppErrandsRoute
+  '/request': typeof AppRequestRoute
+  '/runner': typeof AppRunnerRoute
+  '/settings': typeof AppSettingsRoute
+  '/': typeof AppIndexRoute
+  '/chat/$id': typeof AppChatIdRoute
+  '/tracking/$id': typeof AppTrackingIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/errands': typeof AppErrandsRoute
+  '/_app/request': typeof AppRequestRoute
+  '/_app/runner': typeof AppRunnerRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/chat/$id': typeof AppChatIdRoute
+  '/_app/tracking/$id': typeof AppTrackingIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/errands'
+    | '/request'
+    | '/runner'
+    | '/settings'
+    | '/chat/$id'
+    | '/tracking/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/errands'
+    | '/request'
+    | '/runner'
+    | '/settings'
+    | '/'
+    | '/chat/$id'
+    | '/tracking/$id'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/errands'
+    | '/_app/request'
+    | '/_app/runner'
+    | '/_app/settings'
+    | '/_app/'
+    | '/_app/chat/$id'
+    | '/_app/tracking/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/runner': {
+      id: '/_app/runner'
+      path: '/runner'
+      fullPath: '/runner'
+      preLoaderRoute: typeof AppRunnerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/request': {
+      id: '/_app/request'
+      path: '/request'
+      fullPath: '/request'
+      preLoaderRoute: typeof AppRequestRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/errands': {
+      id: '/_app/errands'
+      path: '/errands'
+      fullPath: '/errands'
+      preLoaderRoute: typeof AppErrandsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/$id': {
+      id: '/_app/tracking/$id'
+      path: '/tracking/$id'
+      fullPath: '/tracking/$id'
+      preLoaderRoute: typeof AppTrackingIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chat/$id': {
+      id: '/_app/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/chat/$id'
+      preLoaderRoute: typeof AppChatIdRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppErrandsRoute: typeof AppErrandsRoute
+  AppRequestRoute: typeof AppRequestRoute
+  AppRunnerRoute: typeof AppRunnerRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppChatIdRoute: typeof AppChatIdRoute
+  AppTrackingIdRoute: typeof AppTrackingIdRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppErrandsRoute: AppErrandsRoute,
+  AppRequestRoute: AppRequestRoute,
+  AppRunnerRoute: AppRunnerRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppChatIdRoute: AppChatIdRoute,
+  AppTrackingIdRoute: AppTrackingIdRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
