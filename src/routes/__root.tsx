@@ -78,10 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "FetchIt connects you with trusted local runners to handle errands fast — groceries, packages, bills, and more." },
       { name: "author", content: "FetchIt" },
       { property: "og:title", content: "FetchIt — Your errands, simplified." },
-      { property: "og:description", content: "Trusted local runners for groceries, packages, bills, and more." },
+      { property: "og:description", content: "FetchIt connects you with trusted local runners to handle errands fast — groceries, packages, bills, and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "FetchIt — Your errands, simplified." },
+      { name: "twitter:description", content: "FetchIt connects you with trusted local runners to handle errands fast — groceries, packages, bills, and more." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e6740fe-8679-4811-91b3-339703df313c/id-preview-0f8e01e8--963c6bb7-6a1c-4300-8c94-ee0d891c6c50.lovable.app-1779805862896.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e6740fe-8679-4811-91b3-339703df313c/id-preview-0f8e01e8--963c6bb7-6a1c-4300-8c94-ee0d891c6c50.lovable.app-1779805862896.png" },
     ],
     links: [
       {
