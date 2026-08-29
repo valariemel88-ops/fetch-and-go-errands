@@ -31,7 +31,12 @@ function setScrollMap(map: Record<string, number>) {
 
 export function AppShell() {
   const location = useLocation();
-  const router = useRouter();
+  const { account } = useAccount();
+  const tabs: Tab[] = [
+    HOME_TAB,
+    ...(account?.role ? ROLE_TABS[account.role]! : GUEST_TABS),
+    SETTINGS_TAB,
+  ];
   const mainRef = useRef<HTMLDivElement>(null);
   const prevPath = useRef<string>(location.pathname);
 
@@ -50,7 +55,7 @@ export function AppShell() {
     prevPath.current = location.pathname;
   }, [location.pathname]);
 
-  const isTab = TABS.some((t) => t.to === location.pathname);
+  const isTab = tabs.some((t) => t.to === location.pathname);
 
   return (
     <div className="flex flex-col h-[100dvh] bg-background text-foreground">
@@ -70,7 +75,7 @@ export function AppShell() {
 
       <nav className="fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 bg-background/85 backdrop-blur-xl border-t border-border">
         <div className="grid grid-cols-4 gap-1">
-          {TABS.map((t) => {
+          {tabs.map((t) => {
             const active = location.pathname === t.to;
             const Icon = t.icon;
             return (
