@@ -17,6 +17,7 @@ import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppRunnerRouteImport } from './routes/_app.runner'
 import { Route as AppRequestRouteImport } from './routes/_app.request'
 import { Route as AppErrandsRouteImport } from './routes/_app.errands'
+import { Route as AppDispatchRouteImport } from './routes/_app.dispatch'
 import { Route as AppTrackingIdRouteImport } from './routes/_app.tracking.$id'
 import { Route as AppChatIdRouteImport } from './routes/_app.chat.$id'
 
@@ -59,6 +60,11 @@ const AppErrandsRoute = AppErrandsRouteImport.update({
   path: '/errands',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDispatchRoute = AppDispatchRouteImport.update({
+  id: '/dispatch',
+  path: '/dispatch',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTrackingIdRoute = AppTrackingIdRouteImport.update({
   id: '/tracking/$id',
   path: '/tracking/$id',
@@ -73,6 +79,7 @@ const AppChatIdRoute = AppChatIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/auth': typeof AuthRoute
+  '/dispatch': typeof AppDispatchRoute
   '/errands': typeof AppErrandsRoute
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/dispatch': typeof AppDispatchRoute
   '/errands': typeof AppErrandsRoute
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_app/dispatch': typeof AppDispatchRoute
   '/_app/errands': typeof AppErrandsRoute
   '/_app/request': typeof AppRequestRoute
   '/_app/runner': typeof AppRunnerRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/dispatch'
     | '/errands'
     | '/request'
     | '/runner'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/dispatch'
     | '/errands'
     | '/request'
     | '/runner'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/auth'
+    | '/_app/dispatch'
     | '/_app/errands'
     | '/_app/request'
     | '/_app/runner'
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppErrandsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dispatch': {
+      id: '/_app/dispatch'
+      path: '/dispatch'
+      fullPath: '/dispatch'
+      preLoaderRoute: typeof AppDispatchRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tracking/$id': {
       id: '/_app/tracking/$id'
       path: '/tracking/$id'
@@ -223,6 +242,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppDispatchRoute: typeof AppDispatchRoute
   AppErrandsRoute: typeof AppErrandsRoute
   AppRequestRoute: typeof AppRequestRoute
   AppRunnerRoute: typeof AppRunnerRoute
@@ -234,6 +254,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDispatchRoute: AppDispatchRoute,
   AppErrandsRoute: AppErrandsRoute,
   AppRequestRoute: AppRequestRoute,
   AppRunnerRoute: AppRunnerRoute,
