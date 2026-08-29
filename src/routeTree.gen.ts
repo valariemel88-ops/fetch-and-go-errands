@@ -12,10 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppStaffRouteImport } from './routes/_app.staff'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppRunnerRouteImport } from './routes/_app.runner'
 import { Route as AppRequestRouteImport } from './routes/_app.request'
 import { Route as AppErrandsRouteImport } from './routes/_app.errands'
+import { Route as AppDispatchRouteImport } from './routes/_app.dispatch'
+import { Route as AppDeliveriesRouteImport } from './routes/_app.deliveries'
 import { Route as AppTrackingIdRouteImport } from './routes/_app.tracking.$id'
 import { Route as AppChatIdRouteImport } from './routes/_app.chat.$id'
 
@@ -31,6 +34,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffRoute = AppStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -53,6 +61,16 @@ const AppErrandsRoute = AppErrandsRouteImport.update({
   path: '/errands',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDispatchRoute = AppDispatchRouteImport.update({
+  id: '/dispatch',
+  path: '/dispatch',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDeliveriesRoute = AppDeliveriesRouteImport.update({
+  id: '/deliveries',
+  path: '/deliveries',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTrackingIdRoute = AppTrackingIdRouteImport.update({
   id: '/tracking/$id',
   path: '/tracking/$id',
@@ -67,19 +85,25 @@ const AppChatIdRoute = AppChatIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/auth': typeof AuthRoute
+  '/deliveries': typeof AppDeliveriesRoute
+  '/dispatch': typeof AppDispatchRoute
   '/errands': typeof AppErrandsRoute
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
   '/settings': typeof AppSettingsRoute
+  '/staff': typeof AppStaffRoute
   '/chat/$id': typeof AppChatIdRoute
   '/tracking/$id': typeof AppTrackingIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/deliveries': typeof AppDeliveriesRoute
+  '/dispatch': typeof AppDispatchRoute
   '/errands': typeof AppErrandsRoute
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
   '/settings': typeof AppSettingsRoute
+  '/staff': typeof AppStaffRoute
   '/': typeof AppIndexRoute
   '/chat/$id': typeof AppChatIdRoute
   '/tracking/$id': typeof AppTrackingIdRoute
@@ -88,10 +112,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_app/deliveries': typeof AppDeliveriesRoute
+  '/_app/dispatch': typeof AppDispatchRoute
   '/_app/errands': typeof AppErrandsRoute
   '/_app/request': typeof AppRequestRoute
   '/_app/runner': typeof AppRunnerRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/staff': typeof AppStaffRoute
   '/_app/': typeof AppIndexRoute
   '/_app/chat/$id': typeof AppChatIdRoute
   '/_app/tracking/$id': typeof AppTrackingIdRoute
@@ -101,19 +128,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/deliveries'
+    | '/dispatch'
     | '/errands'
     | '/request'
     | '/runner'
     | '/settings'
+    | '/staff'
     | '/chat/$id'
     | '/tracking/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/deliveries'
+    | '/dispatch'
     | '/errands'
     | '/request'
     | '/runner'
     | '/settings'
+    | '/staff'
     | '/'
     | '/chat/$id'
     | '/tracking/$id'
@@ -121,10 +154,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/auth'
+    | '/_app/deliveries'
+    | '/_app/dispatch'
     | '/_app/errands'
     | '/_app/request'
     | '/_app/runner'
     | '/_app/settings'
+    | '/_app/staff'
     | '/_app/'
     | '/_app/chat/$id'
     | '/_app/tracking/$id'
@@ -158,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/staff': {
+      id: '/_app/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AppStaffRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -186,6 +229,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppErrandsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dispatch': {
+      id: '/_app/dispatch'
+      path: '/dispatch'
+      fullPath: '/dispatch'
+      preLoaderRoute: typeof AppDispatchRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/deliveries': {
+      id: '/_app/deliveries'
+      path: '/deliveries'
+      fullPath: '/deliveries'
+      preLoaderRoute: typeof AppDeliveriesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tracking/$id': {
       id: '/_app/tracking/$id'
       path: '/tracking/$id'
@@ -204,20 +261,26 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppDeliveriesRoute: typeof AppDeliveriesRoute
+  AppDispatchRoute: typeof AppDispatchRoute
   AppErrandsRoute: typeof AppErrandsRoute
   AppRequestRoute: typeof AppRequestRoute
   AppRunnerRoute: typeof AppRunnerRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStaffRoute: typeof AppStaffRoute
   AppIndexRoute: typeof AppIndexRoute
   AppChatIdRoute: typeof AppChatIdRoute
   AppTrackingIdRoute: typeof AppTrackingIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDeliveriesRoute: AppDeliveriesRoute,
+  AppDispatchRoute: AppDispatchRoute,
   AppErrandsRoute: AppErrandsRoute,
   AppRequestRoute: AppRequestRoute,
   AppRunnerRoute: AppRunnerRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppStaffRoute: AppStaffRoute,
   AppIndexRoute: AppIndexRoute,
   AppChatIdRoute: AppChatIdRoute,
   AppTrackingIdRoute: AppTrackingIdRoute,

@@ -1,14 +1,24 @@
-import { Link, Outlet, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { Home, ListChecks, Bike, Settings as SettingsIcon } from "lucide-react";
+import { Home, ListChecks, Bike, ClipboardList, Settings as SettingsIcon } from "lucide-react";
+import { useAccount } from "@/hooks/useAccount";
 
-const TABS = [
-  { to: "/", label: "Home", icon: Home },
+type Tab = { to: string; label: string; icon: typeof Home };
+
+const HOME_TAB: Tab = { to: "/", label: "Home", icon: Home };
+const SETTINGS_TAB: Tab = { to: "/settings", label: "Settings", icon: SettingsIcon };
+
+const ROLE_TABS: Record<string, Tab[]> = {
+  retailer_staff: [{ to: "/staff", label: "Requests", icon: ClipboardList }],
+  dispatcher: [{ to: "/dispatch", label: "Dispatch", icon: ListChecks }],
+  rider: [{ to: "/deliveries", label: "Jobs", icon: Bike }],
+};
+
+const GUEST_TABS: Tab[] = [
   { to: "/errands", label: "Errands", icon: ListChecks },
   { to: "/runner", label: "Runner", icon: Bike },
-  { to: "/settings", label: "Settings", icon: SettingsIcon },
-] as const;
+];
 
 const SCROLL_KEY = "fetchit:scroll";
 
@@ -21,7 +31,12 @@ function setScrollMap(map: Record<string, number>) {
 
 export function AppShell() {
   const location = useLocation();
-  const router = useRouter();
+  const { account } = useAccount();
+  const tabs: Tab[] = [
+    HOME_TAB,
+    ...(account?.role ? ROLE_TABS[account.role]! : GUEST_TABS),
+    SETTINGS_TAB,
+  ];
   const mainRef = useRef<HTMLDivElement>(null);
   const prevPath = useRef<string>(location.pathname);
 
@@ -40,7 +55,7 @@ export function AppShell() {
     prevPath.current = location.pathname;
   }, [location.pathname]);
 
-  const isTab = TABS.some((t) => t.to === location.pathname);
+  const isTab = tabs.some((t) => t.to === location.pathname);
 
   return (
     <div className="flex flex-col h-[100dvh] bg-background text-foreground">
@@ -59,8 +74,8 @@ export function AppShell() {
       </div>
 
       <nav className="fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 bg-background/85 backdrop-blur-xl border-t border-border">
-        <div className="grid grid-cols-4 gap-1">
-          {TABS.map((t) => {
+        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+          {tabs.map((t) => {
             const active = location.pathname === t.to;
             const Icon = t.icon;
             return (

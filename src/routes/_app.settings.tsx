@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ROLE_LABEL, useAccount } from "@/hooks/useAccount";
 import { ChevronRight, User, Bell, CreditCard, Shield, HelpCircle, LogOut, Trash2, X } from "lucide-react";
 
 export const Route = createFileRoute("/_app/settings")({
@@ -8,10 +11,20 @@ export const Route = createFileRoute("/_app/settings")({
 
 function Settings() {
   const [confirming, setConfirming] = useState(false);
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const { session, account } = useAccount();
+
+  async function signOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   const sections: { label: string; items: { icon: any; label: string; hint?: string }[] }[] = [
     { label: "Account", items: [
-      { icon: User, label: "Profile", hint: "Amani M." },
+      { icon: User, label: "Profile", hint: account?.fullName || "—" },
       { icon: Bell, label: "Notifications" },
       { icon: CreditCard, label: "Payment methods", hint: "M-Pesa" },
     ]},
@@ -28,8 +41,10 @@ function Settings() {
       <div className="mt-5 bg-card rounded-2xl p-4 flex items-center gap-3" style={{ boxShadow: "var(--shadow-soft)" }}>
         <div className="w-14 h-14 rounded-full grid place-items-center text-lg font-semibold text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>A</div>
         <div className="flex-1">
-          <p className="font-semibold">Amani Mwangi</p>
-          <p className="text-xs text-muted-foreground">+254 712 345 678</p>
+          <p className="font-semibold">{account?.fullName || session?.user.email || "Guest"}</p>
+          <p className="text-xs text-muted-foreground">
+            {account?.role ? ROLE_LABEL[account.role] : "Not signed in"}{account?.phone ? ` · ${account.phone}` : ""}
+          </p>
         </div>
         <button className="text-xs font-semibold text-primary">Edit</button>
       </div>
@@ -53,8 +68,8 @@ function Settings() {
       ))}
 
       <div className="mt-6 space-y-2">
-        <button className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-secondary text-secondary-foreground font-semibold text-sm">
-          <LogOut className="w-4 h-4" /> Log out
+        <button onClick={signOut} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-secondary text-secondary-foreground font-semibold text-sm">
+          <LogOut className="w-4 h-4" /> {session ? "Log out" : "Sign in"}
         </button>
         <button onClick={() => setConfirming(true)} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-destructive/10 text-destructive font-semibold text-sm">
           <Trash2 className="w-4 h-4" /> Delete account

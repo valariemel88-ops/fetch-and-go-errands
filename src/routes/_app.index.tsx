@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { ROLE_HOME, useAccount } from "@/hooks/useAccount";
 import { motion } from "framer-motion";
 import { Package, ShoppingBag, FileText, Receipt, Pill, Sparkles, ArrowRight, MapPin, Zap } from "lucide-react";
 
@@ -16,13 +18,20 @@ const CATEGORIES = [
 ];
 
 function Home() {
+  const navigate = useNavigate();
+  const { session, account } = useAccount();
+
+  useEffect(() => {
+    if (session && account?.role) navigate({ to: ROLE_HOME[account.role], replace: true });
+  }, [session, account, navigate]);
+
   return (
     <div className="px-5 pt-[max(env(safe-area-inset-top),1.25rem)]">
       {/* Header */}
       <header className="flex items-center justify-between mb-5">
         <div>
           <p className="text-xs text-muted-foreground">Welcome back</p>
-          <h1 className="text-xl font-semibold tracking-tight">Hi, Amani 👋</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Hi, {account?.fullName?.split(" ")[0] ?? "there"} 👋</h1>
         </div>
         <div className="w-11 h-11 rounded-full grid place-items-center text-sm font-semibold text-primary-foreground"
              style={{ background: "var(--gradient-hero)" }}>A</div>
