@@ -74,7 +74,7 @@ export function AppShell() {
       </div>
 
       <nav className="fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 bg-background/85 backdrop-blur-xl border-t border-border">
-        <div className="grid grid-cols-4 gap-1">
+        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
           {tabs.map((t) => {
             const active = location.pathname === t.to;
             const Icon = t.icon;
