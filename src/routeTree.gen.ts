@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppStaffRouteImport } from './routes/_app.staff'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppRunnerRouteImport } from './routes/_app.runner'
 import { Route as AppRequestRouteImport } from './routes/_app.request'
@@ -31,6 +32,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStaffRoute = AppStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
   '/settings': typeof AppSettingsRoute
+  '/staff': typeof AppStaffRoute
   '/chat/$id': typeof AppChatIdRoute
   '/tracking/$id': typeof AppTrackingIdRoute
 }
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/request': typeof AppRequestRoute
   '/runner': typeof AppRunnerRoute
   '/settings': typeof AppSettingsRoute
+  '/staff': typeof AppStaffRoute
   '/': typeof AppIndexRoute
   '/chat/$id': typeof AppChatIdRoute
   '/tracking/$id': typeof AppTrackingIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/_app/request': typeof AppRequestRoute
   '/_app/runner': typeof AppRunnerRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/staff': typeof AppStaffRoute
   '/_app/': typeof AppIndexRoute
   '/_app/chat/$id': typeof AppChatIdRoute
   '/_app/tracking/$id': typeof AppTrackingIdRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/request'
     | '/runner'
     | '/settings'
+    | '/staff'
     | '/chat/$id'
     | '/tracking/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/request'
     | '/runner'
     | '/settings'
+    | '/staff'
     | '/'
     | '/chat/$id'
     | '/tracking/$id'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/_app/request'
     | '/_app/runner'
     | '/_app/settings'
+    | '/_app/staff'
     | '/_app/'
     | '/_app/chat/$id'
     | '/_app/tracking/$id'
@@ -156,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/staff': {
+      id: '/_app/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AppStaffRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/settings': {
@@ -208,6 +227,7 @@ interface AppRouteChildren {
   AppRequestRoute: typeof AppRequestRoute
   AppRunnerRoute: typeof AppRunnerRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStaffRoute: typeof AppStaffRoute
   AppIndexRoute: typeof AppIndexRoute
   AppChatIdRoute: typeof AppChatIdRoute
   AppTrackingIdRoute: typeof AppTrackingIdRoute
@@ -218,6 +238,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRequestRoute: AppRequestRoute,
   AppRunnerRoute: AppRunnerRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppStaffRoute: AppStaffRoute,
   AppIndexRoute: AppIndexRoute,
   AppChatIdRoute: AppChatIdRoute,
   AppTrackingIdRoute: AppTrackingIdRoute,
