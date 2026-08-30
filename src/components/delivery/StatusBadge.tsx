@@ -5,6 +5,7 @@ const STYLES: Record<DeliveryStatus, string> = {
   ASSIGNED: "bg-primary-soft text-primary",
   PICKED_UP: "bg-gold/25 text-gold-foreground",
   DELIVERED: "bg-success/20 text-success",
+  CANCELLED: "bg-destructive/15 text-destructive",
 };
 
 const LABELS: Record<DeliveryStatus, string> = {
@@ -12,6 +13,7 @@ const LABELS: Record<DeliveryStatus, string> = {
   ASSIGNED: "Assigned",
   PICKED_UP: "Picked up",
   DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 export function StatusBadge({ status }: { status: DeliveryStatus }) {

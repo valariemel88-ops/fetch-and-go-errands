@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, RefreshCw, UserCheck } from "lucide-react";
+import { Loader2, RefreshCw, UserCheck, XCircle } from "lucide-react";
 import { RoleGate } from "@/components/delivery/RoleGate";
 import { StatusBadge } from "@/components/delivery/StatusBadge";
-import { assignRider, listAllDeliveries, listRiders, type Delivery } from "@/lib/deliveries.functions";
+import { assignRider, cancelDelivery, listAllDeliveries, listRiders, type Delivery } from "@/lib/deliveries.functions";
 
 export const Route = createFileRoute("/_app/dispatch")({
   head: () => ({
@@ -48,6 +48,15 @@ function DispatchDashboard() {
       qc.invalidateQueries({ queryKey: ["deliveries", "all"] });
     },
     onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not assign the rider."),
+  });
+
+  const cancel = useMutation({
+    mutationFn: (delivery_id: string) => cancelDelivery({ data: { delivery_id } }),
+    onSuccess: () => {
+      setError(null);
+      qc.invalidateQueries({ queryKey: ["deliveries", "all"] });
+    },
+    onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not cancel the delivery."),
   });
 
   const rows = (data ?? []) as Delivery[];
@@ -103,6 +112,7 @@ function DispatchDashboard() {
                   <UserCheck className="w-4 h-4" /> Assign
                 </button>
               </div>
+              <CancelButton d={d} cancel={cancel} />
             </div>
           ))}
         </div>
@@ -119,11 +129,29 @@ function DispatchDashboard() {
               <p className="text-[11px] text-muted-foreground mt-2">
                 Rider: {d.rider_name ?? "—"} · Staff: {d.staff_name ?? "—"} · Updated {new Date(d.updated_at).toLocaleTimeString()}
               </p>
+              <CancelButton d={d} cancel={cancel} />
             </div>
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+function CancelButton({ d, cancel }: { d: Delivery; cancel: ReturnType<typeof useMutation<unknown, unknown, string>> }) {
+  if (d.status !== "OPEN" && d.status !== "ASSIGNED") return null;
+  return (
+    <button
+      disabled={cancel.isPending}
+      onClick={() => {
+        if (window.confirm(`Cancel the delivery for ${d.customer_name}? This cannot be undone.`)) {
+          cancel.mutate(d.delivery_id);
+        }
+      }}
+      className="mt-3 w-full py-2.5 rounded-xl border border-destructive/40 text-destructive text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition"
+    >
+      <XCircle className="w-4 h-4" /> Cancel delivery
+    </button>
   );
 }
 

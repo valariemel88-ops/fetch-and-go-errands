@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, PackagePlus, RefreshCw } from "lucide-react";
+import { Loader2, PackagePlus, RefreshCw, XCircle } from "lucide-react";
 import { RoleGate } from "@/components/delivery/RoleGate";
 import { StatusBadge } from "@/components/delivery/StatusBadge";
-import { createDelivery, listMyDeliveries, type Delivery } from "@/lib/deliveries.functions";
+import { cancelDelivery, createDelivery, listMyDeliveries, type Delivery } from "@/lib/deliveries.functions";
 
 export const Route = createFileRoute("/_app/staff")({
   head: () => ({
@@ -45,6 +45,15 @@ function StaffDashboard() {
       qc.invalidateQueries({ queryKey: ["deliveries", "mine"] });
     },
     onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not create the request."),
+  });
+
+  const cancel = useMutation({
+    mutationFn: (delivery_id: string) => cancelDelivery({ data: { delivery_id } }),
+    onSuccess: () => {
+      setError(null);
+      qc.invalidateQueries({ queryKey: ["deliveries", "mine"] });
+    },
+    onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not cancel the request."),
   });
 
   const rows = (data ?? []) as Delivery[];
@@ -106,6 +115,19 @@ function StaffDashboard() {
               <p className="text-[11px] text-muted-foreground mt-2">
                 {d.rider_name ? `Rider: ${d.rider_name}` : "Awaiting rider assignment"} · {new Date(d.created_at).toLocaleString()}
               </p>
+              {d.status === "OPEN" && (
+                <button
+                  disabled={cancel.isPending}
+                  onClick={() => {
+                    if (window.confirm(`Cancel the delivery for ${d.customer_name}? This cannot be undone.`)) {
+                      cancel.mutate(d.delivery_id);
+                    }
+                  }}
+                  className="mt-3 w-full py-2.5 rounded-xl border border-destructive/40 text-destructive text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition"
+                >
+                  <XCircle className="w-4 h-4" /> Cancel request
+                </button>
+              )}
             </div>
           ))}
         </div>

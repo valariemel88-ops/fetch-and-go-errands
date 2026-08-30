@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.enforce_delivery_rules() FROM anon, authenticated;
