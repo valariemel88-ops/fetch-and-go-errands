@@ -50,6 +50,15 @@ function DispatchDashboard() {
     onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not assign the rider."),
   });
 
+  const cancel = useMutation({
+    mutationFn: (delivery_id: string) => cancelDelivery({ data: { delivery_id } }),
+    onSuccess: () => {
+      setError(null);
+      qc.invalidateQueries({ queryKey: ["deliveries", "all"] });
+    },
+    onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not cancel the delivery."),
+  });
+
   const rows = (data ?? []) as Delivery[];
   const open = rows.filter((d) => d.status === "OPEN");
   const active = rows.filter((d) => d.status !== "OPEN");
