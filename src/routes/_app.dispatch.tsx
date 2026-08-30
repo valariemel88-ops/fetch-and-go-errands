@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, RefreshCw, UserCheck } from "lucide-react";
+import { Loader2, RefreshCw, UserCheck, XCircle } from "lucide-react";
 import { RoleGate } from "@/components/delivery/RoleGate";
 import { StatusBadge } from "@/components/delivery/StatusBadge";
-import { assignRider, listAllDeliveries, listRiders, type Delivery } from "@/lib/deliveries.functions";
+import { assignRider, cancelDelivery, listAllDeliveries, listRiders, type Delivery } from "@/lib/deliveries.functions";
 
 export const Route = createFileRoute("/_app/dispatch")({
   head: () => ({
