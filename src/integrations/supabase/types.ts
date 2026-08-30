@@ -21,6 +21,7 @@ export type Database = {
           customer_phone: string
           delivery_address: string
           delivery_id: string
+          handoff_code: string
           item_description: string
           retailer_staff_id: string
           rider_id: string | null
@@ -33,6 +34,7 @@ export type Database = {
           customer_phone: string
           delivery_address: string
           delivery_id?: string
+          handoff_code?: string
           item_description: string
           retailer_staff_id: string
           rider_id?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           customer_phone?: string
           delivery_address?: string
           delivery_id?: string
+          handoff_code?: string
           item_description?: string
           retailer_staff_id?: string
           rider_id?: string | null
