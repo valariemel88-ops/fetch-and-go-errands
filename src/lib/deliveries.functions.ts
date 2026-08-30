@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const DELIVERY_STATUSES = ["OPEN", "ASSIGNED", "PICKED_UP", "DELIVERED"] as const;
+export const DELIVERY_STATUSES = ["OPEN", "ASSIGNED", "PICKED_UP", "DELIVERED", "CANCELLED"] as const;
 export type DeliveryStatus = (typeof DELIVERY_STATUSES)[number];
 export type AppRole = "retailer_staff" | "dispatcher" | "rider";
 
