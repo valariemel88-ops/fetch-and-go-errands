@@ -115,6 +115,19 @@ function StaffDashboard() {
               <p className="text-[11px] text-muted-foreground mt-2">
                 {d.rider_name ? `Rider: ${d.rider_name}` : "Awaiting rider assignment"} · {new Date(d.created_at).toLocaleString()}
               </p>
+              {d.status === "OPEN" && (
+                <button
+                  disabled={cancel.isPending}
+                  onClick={() => {
+                    if (window.confirm(`Cancel the delivery for ${d.customer_name}? This cannot be undone.`)) {
+                      cancel.mutate(d.delivery_id);
+                    }
+                  }}
+                  className="mt-3 w-full py-2.5 rounded-xl border border-destructive/40 text-destructive text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition"
+                >
+                  <XCircle className="w-4 h-4" /> Cancel request
+                </button>
+              )}
             </div>
           ))}
         </div>
