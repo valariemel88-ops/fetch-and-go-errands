@@ -112,6 +112,7 @@ function DispatchDashboard() {
                   <UserCheck className="w-4 h-4" /> Assign
                 </button>
               </div>
+              <CancelButton d={d} cancel={cancel} />
             </div>
           ))}
         </div>
@@ -128,6 +129,7 @@ function DispatchDashboard() {
               <p className="text-[11px] text-muted-foreground mt-2">
                 Rider: {d.rider_name ?? "—"} · Staff: {d.staff_name ?? "—"} · Updated {new Date(d.updated_at).toLocaleTimeString()}
               </p>
+              <CancelButton d={d} cancel={cancel} />
             </div>
           ))}
         </div>
