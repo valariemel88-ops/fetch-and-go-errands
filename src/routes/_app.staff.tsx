@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, PackagePlus, RefreshCw } from "lucide-react";
 import { RoleGate } from "@/components/delivery/RoleGate";
 import { StatusBadge } from "@/components/delivery/StatusBadge";
-import { createDelivery, listMyDeliveries, type Delivery } from "@/lib/deliveries.functions";
+import { cancelDelivery, createDelivery, listMyDeliveries, type Delivery } from "@/lib/deliveries.functions";
 
 export const Route = createFileRoute("/_app/staff")({
   head: () => ({
@@ -45,6 +45,15 @@ function StaffDashboard() {
       qc.invalidateQueries({ queryKey: ["deliveries", "mine"] });
     },
     onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not create the request."),
+  });
+
+  const cancel = useMutation({
+    mutationFn: (delivery_id: string) => cancelDelivery({ data: { delivery_id } }),
+    onSuccess: () => {
+      setError(null);
+      qc.invalidateQueries({ queryKey: ["deliveries", "mine"] });
+    },
+    onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not cancel the request."),
   });
 
   const rows = (data ?? []) as Delivery[];
