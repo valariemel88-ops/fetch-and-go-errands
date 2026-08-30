@@ -138,6 +138,23 @@ function DispatchDashboard() {
   );
 }
 
+function CancelButton({ d, cancel }: { d: Delivery; cancel: ReturnType<typeof useMutation<unknown, unknown, string>> }) {
+  if (d.status !== "OPEN" && d.status !== "ASSIGNED") return null;
+  return (
+    <button
+      disabled={cancel.isPending}
+      onClick={() => {
+        if (window.confirm(`Cancel the delivery for ${d.customer_name}? This cannot be undone.`)) {
+          cancel.mutate(d.delivery_id);
+        }
+      }}
+      className="mt-3 w-full py-2.5 rounded-xl border border-destructive/40 text-destructive text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition"
+    >
+      <XCircle className="w-4 h-4" /> Cancel delivery
+    </button>
+  );
+}
+
 function Summary({ d }: { d: Delivery }) {
   return (
     <>
