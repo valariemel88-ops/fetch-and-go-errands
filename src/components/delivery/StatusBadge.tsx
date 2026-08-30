@@ -13,6 +13,7 @@ const LABELS: Record<DeliveryStatus, string> = {
   ASSIGNED: "Assigned",
   PICKED_UP: "Picked up",
   DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 export function StatusBadge({ status }: { status: DeliveryStatus }) {

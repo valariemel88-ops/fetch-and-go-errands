@@ -215,7 +215,59 @@ const NEXT_STATUS: Record<string, DeliveryStatus | null> = {
   ASSIGNED: "PICKED_UP",
   PICKED_UP: "DELIVERED",
   DELIVERED: null,
+  CANCELLED: null,
 };
+
+/**
+ * Cancel a delivery.
+ * - Retailer staff may cancel their own delivery while it is OPEN.
+ * - Dispatchers may cancel while OPEN or ASSIGNED.
+ * The database trigger enforces the same rules.
+ */
+export const cancelDelivery = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ delivery_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: existing, error: readErr } = await supabase
+      .from("deliveries")
+      .select("status, retailer_staff_id")
+      .eq("delivery_id", data.delivery_id)
+      .maybeSingle();
+    if (readErr) fail("Could not load that delivery.");
+    if (!existing) fail("Delivery not found.");
+
+    const { data: isDispatcher } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "dispatcher")
+      .maybeSingle();
+
+    const isOwner = existing.retailer_staff_id === userId;
+    if (!isDispatcher && !isOwner) fail("You are not authorised to cancel this delivery.");
+    if (existing.status === "OPEN") {
+      if (!isDispatcher && !isOwner) fail("Only the creating staff member or a dispatcher can cancel.");
+    } else if (existing.status === "ASSIGNED") {
+      if (!isDispatcher) fail("Only a dispatcher can cancel an assigned delivery.");
+    } else {
+      fail(`A ${existing.status} delivery cannot be cancelled.`);
+    }
+
+    const { data: row, error } = await supabase
+      .from("deliveries")
+      .update({ status: "CANCELLED" })
+      .eq("delivery_id", data.delivery_id)
+      .select(SELECT_COLS)
+      .maybeSingle();
+
+    if (error) fail(error.message || "Could not cancel the delivery.");
+    if (!row) fail("Cancellation was rejected. Please refresh and try again.");
+    return row as Delivery;
+  });
 
 export const advanceDeliveryStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
