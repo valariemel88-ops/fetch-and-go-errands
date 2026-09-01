@@ -35,10 +35,12 @@ function RiderDashboard() {
   });
 
   const advance = useMutation({
-    mutationFn: (v: { delivery_id: string; next_status: "PICKED_UP" | "DELIVERED" }) =>
+    mutationFn: (v: { delivery_id: string; next_status: "PICKED_UP" | "DELIVERED"; confirmation_code?: string }) =>
       advanceDeliveryStatus({ data: v }),
     onSuccess: () => {
       setError(null);
+      setConfirming(null);
+      setCode("");
       qc.invalidateQueries({ queryKey: ["deliveries", "rider"] });
     },
     onError: (e: unknown) => setError(e instanceof Error ? e.message : "Could not update the status."),
