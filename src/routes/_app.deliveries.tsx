@@ -92,14 +92,56 @@ function RiderDashboard() {
                     <PackageCheck className="w-4 h-4" /> Mark picked up
                   </button>
                 )}
-                {d.status === "PICKED_UP" && (
+                {d.status === "PICKED_UP" && confirming !== d.delivery_id && (
                   <button
                     disabled={advance.isPending}
-                    onClick={() => advance.mutate({ delivery_id: d.delivery_id, next_status: "DELIVERED" })}
+                    onClick={() => { setError(null); setCode(""); setConfirming(d.delivery_id); }}
                     className="w-full py-3 rounded-xl bg-success text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
                   >
-                    <CheckCircle2 className="w-4 h-4" /> Mark delivered
+                    <ScanLine className="w-4 h-4" /> Confirm handoff
                   </button>
+                )}
+                {d.status === "PICKED_UP" && confirming === d.delivery_id && (
+                  <form
+                    className="rounded-xl border border-border p-3 space-y-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!advance.isPending) {
+                        advance.mutate({ delivery_id: d.delivery_id, next_status: "DELIVERED", confirmation_code: code });
+                      }
+                    }}
+                  >
+                    <p className="text-xs text-muted-foreground">
+                      Ask {d.customer_name} for the 6-character handoff code and enter or scan it.
+                    </p>
+                    <input
+                      autoFocus
+                      value={code}
+                      onChange={(e) => setCode(e.target.value.toUpperCase())}
+                      placeholder="ABC123"
+                      maxLength={12}
+                      inputMode="text"
+                      autoCapitalize="characters"
+                      className="w-full rounded-xl bg-background border border-border px-4 py-3 text-center text-lg font-mono tracking-[0.3em] outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setConfirming(null); setCode(""); }}
+                        className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={advance.isPending || code.trim().length === 0}
+                        className="flex-1 py-2.5 rounded-xl bg-success text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+                      >
+                        {advance.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                        Confirm delivered
+                      </button>
+                    </div>
+                  </form>
                 )}
               </div>
             </div>
