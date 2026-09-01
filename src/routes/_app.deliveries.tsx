@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_app/deliveries")({
 function RiderDashboard() {
   const qc = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<string | null>(null);
+  const [code, setCode] = useState("");
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["deliveries", "rider"],
