@@ -15,6 +15,7 @@ export type Delivery = {
   delivery_address: string;
   item_description: string;
   status: DeliveryStatus;
+  handoff_code: string;
   created_at: string;
   updated_at: string;
   rider_name?: string | null;
@@ -22,7 +23,7 @@ export type Delivery = {
 };
 
 const SELECT_COLS =
-  "delivery_id, retailer_staff_id, rider_id, customer_name, customer_phone, delivery_address, item_description, status, created_at, updated_at";
+  "delivery_id, retailer_staff_id, rider_id, customer_name, customer_phone, delivery_address, item_description, status, handoff_code, created_at, updated_at";
 
 function fail(message: string): never {
   throw new Error(message);
