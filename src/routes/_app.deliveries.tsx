@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Loader2, PackageCheck, RefreshCw } from "lucide-react";
+import { CheckCircle2, Loader2, PackageCheck, RefreshCw, ScanLine } from "lucide-react";
 import { RoleGate } from "@/components/delivery/RoleGate";
 import { StatusBadge } from "@/components/delivery/StatusBadge";
 import { advanceDeliveryStatus, listRiderDeliveries, type Delivery } from "@/lib/deliveries.functions";
