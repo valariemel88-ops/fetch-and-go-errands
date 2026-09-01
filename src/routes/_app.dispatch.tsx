@@ -164,6 +164,12 @@ function Summary({ d }: { d: Delivery }) {
       </div>
       <p className="text-xs text-muted-foreground mt-1">{d.item_description}</p>
       <p className="text-xs text-muted-foreground">{d.delivery_address} · {d.customer_phone}</p>
+      {d.status !== "CANCELLED" && (
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          Handoff code:{" "}
+          <span className="font-mono text-sm font-semibold tracking-[0.2em] text-foreground">{d.handoff_code}</span>
+        </p>
+      )}
     </>
   );
 }
