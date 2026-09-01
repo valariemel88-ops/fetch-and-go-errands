@@ -277,6 +277,7 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
       .object({
         delivery_id: z.string().uuid(),
         next_status: z.enum(["PICKED_UP", "DELIVERED"]),
+        confirmation_code: z.string().trim().max(20).optional(),
       })
       .parse(input),
   )
@@ -286,7 +287,7 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
 
     const { data: existing, error: readErr } = await supabase
       .from("deliveries")
-      .select("status, rider_id")
+      .select("status, rider_id, handoff_code")
       .eq("delivery_id", data.delivery_id)
       .maybeSingle();
     if (readErr) fail("Could not load that delivery.");
@@ -296,6 +297,14 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
     const expected = NEXT_STATUS[existing.status];
     if (expected !== data.next_status) {
       fail(`Invalid status change: ${existing.status} → ${data.next_status}.`);
+    }
+
+    if (data.next_status === "DELIVERED") {
+      const supplied = (data.confirmation_code ?? "").trim().toUpperCase();
+      if (!supplied) fail("Enter the customer's handoff code to confirm delivery.");
+      if (supplied !== String(existing.handoff_code).trim().toUpperCase()) {
+        fail("That handoff code does not match this delivery.");
+      }
     }
 
     const { data: row, error } = await supabase
