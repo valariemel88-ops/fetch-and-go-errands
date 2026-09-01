@@ -15,6 +15,7 @@ export type Delivery = {
   delivery_address: string;
   item_description: string;
   status: DeliveryStatus;
+  handoff_code: string;
   created_at: string;
   updated_at: string;
   rider_name?: string | null;
@@ -22,7 +23,7 @@ export type Delivery = {
 };
 
 const SELECT_COLS =
-  "delivery_id, retailer_staff_id, rider_id, customer_name, customer_phone, delivery_address, item_description, status, created_at, updated_at";
+  "delivery_id, retailer_staff_id, rider_id, customer_name, customer_phone, delivery_address, item_description, status, handoff_code, created_at, updated_at";
 
 function fail(message: string): never {
   throw new Error(message);
@@ -276,6 +277,7 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
       .object({
         delivery_id: z.string().uuid(),
         next_status: z.enum(["PICKED_UP", "DELIVERED"]),
+        confirmation_code: z.string().trim().max(20).optional(),
       })
       .parse(input),
   )
@@ -285,7 +287,7 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
 
     const { data: existing, error: readErr } = await supabase
       .from("deliveries")
-      .select("status, rider_id")
+      .select("status, rider_id, handoff_code")
       .eq("delivery_id", data.delivery_id)
       .maybeSingle();
     if (readErr) fail("Could not load that delivery.");
@@ -295,6 +297,14 @@ export const advanceDeliveryStatus = createServerFn({ method: "POST" })
     const expected = NEXT_STATUS[existing.status];
     if (expected !== data.next_status) {
       fail(`Invalid status change: ${existing.status} → ${data.next_status}.`);
+    }
+
+    if (data.next_status === "DELIVERED") {
+      const supplied = (data.confirmation_code ?? "").trim().toUpperCase();
+      if (!supplied) fail("Enter the customer's handoff code to confirm delivery.");
+      if (supplied !== String(existing.handoff_code).trim().toUpperCase()) {
+        fail("That handoff code does not match this delivery.");
+      }
     }
 
     const { data: row, error } = await supabase
